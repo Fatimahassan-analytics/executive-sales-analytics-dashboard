@@ -7,130 +7,66 @@ A 5-KPI regional sales performance dashboard built in Streamlit + Plotly, with d
 **Author:** Fatima Hassan — [github.com/Fatimahassan-analytics](https://github.com/Fatimahassan-analytics)
 
 ---
+# Business Delivery Intelligence Dashboard
 
-## Problem
+A 5-KPI regional delivery performance dashboard built in Streamlit + Plotly, featuring drill-down capabilities from city to vehicle type and Year-to-Date (YTD) vs. target on-time tracking.
 
-A regional sales director needs a single dashboard they can open every Monday morning to see last week's performance, identify underperforming stores, and decide where to send attention. The dashboard answers **five business questions**:
+---
 
-1. What was total sales last week vs the previous week and vs target?
-2. Which regions are over- or under-performing?
-3. Which product categories are driving changes?
-4. What is the impact of shipping mode / customer segment?
-5. How is YTD tracking against annual target?
+## 🎯 Problem
 
-## Dataset
+A regional operations manager needs a single, intuitive dashboard they can open every Monday morning to review last week's performance, identify underperforming cities or routes, and decide where to allocate operational attention. 
 
-- **Source:** Tableau Superstore sample data — freely available, ~10,000 rows.
-- **Schema:** `OrderID, OrderDate, ShipMode, Segment, Region, Category, SubCategory, Sales, Quantity, Discount, Profit`.
-- **Backup:** A 5,000-row synthetic sample (`data/raw/superstore_sample.csv`) is bundled with this repo so the dashboard runs end-to-end without downloading. Run `python download_data.py` to attempt to fetch the real Superstore dataset.
+This dashboard answers **five critical business questions**:
+1. What was the total order volume and on-time delivery rate last week vs. the previous week and vs. the business target?
+2. Which cities or regions are over- or under-performing in average delivery times?
+3. Which order types (e.g., meal, buffet, drinks, snack) and vehicle types are driving performance changes?
+4. What is the measurable impact of external factors like weather and traffic conditions on delivery times?
+5. How is Year-to-Date (YTD) on-time performance tracking against the annual operational target?
 
-## Approach
+---
 
-1. **Data prep** — derive Year, Quarter, Month, Week, YearMonth, ProfitMargin columns.
-2. **KPIs** — total sales, total profit, profit margin, WoW change, average order value.
-3. **Visuals**:
-   - Sales + profit time series (monthly) — Plotly dual-line chart
-   - Sales by region — bar chart coloured by profit
-   - Sales by category — stacked bar chart (sub-category drill-down)
-   - Sales by segment — pie chart
-   - Sales by ship mode — bar chart
-   - YTD vs previous year — progress bar
-4. **Filters** — region, category, year (all multi-select).
-5. **Design rationale** — single page, KPI strip at top, 2-column visual grid, footer with raw data table + CSV download.
+## 📊 Dataset
 
-## Results
+- **Source:** Anonymized regional delivery operations dataset.
+- **Schema:** The dataset contains 28 headerless columns mapped to the following features:
+  - **Identifiers:** `order_id`, `restaurant_id`
+  - **Performance:** `time_taken`, `rating`, `multiple_deliveries`
+  - **Geospatial:** `del_lat`, `del_lon`, `res_lat`, `res_lon`, `distance`, `distance_category`
+  - **Temporal:** `date`, `day_of_month`, `month`, `day_of_week`, `is_holiday`, `time_start`, `time_end`, `time_of_day`
+  - **Conditions:** `weather`, `traffic`
+  - **Order Details:** `type_of_order`, `vehicle_type`, `promo_code`, `is_sponsored`
+  - **Location/Demographics:** `city_type`, `delivery_person_age`, `city_code`
+- **Backup:** A 5,000-row synthetic sample (`delivery_data.csv`) is bundled with this repository so the dashboard runs end-to-end immediately without requiring external database connections.
 
-| KPI                       | Sample (synthetic) | Real Superstore |
-|---------------------------|-------------------|-----------------|
-| Total sales               | ~$2.4M            | ~$2.3M          |
-| Profit margin             | ~22%              | ~12%            |
-| Avg order value            | ~$480             | ~$460           |
-| Top region                | West              | West            |
-| Top category              | Technology        | Technology      |
+---
 
-> Numbers above are illustrative; re-execute the notebook to see your exact values.
+## ⚙️ Approach
 
-## Live Demo
+1. **Data Preparation:** The headerless CSV is dynamically mapped to 28 explicit columns. Temporal features (`Week`, `Month`, `Year`, `YearMonth`) are derived, and a binary `is_on_time` flag (defined as `time_taken <= 30` minutes) is engineered to standardize performance metrics.
+2. **Key Performance Indicators (KPIs):** Calculate total orders, on-time delivery rate, average delivery time, week-over-week (WoW) percentage change, and average delivery distance.
+3. **Visualizations:**
+   - **Delivery Time & On-Time Rate (Monthly):** Plotly dual-line chart tracking trends over time.
+   - **Avg Delivery Time by City:** Bar chart colored by on-time rate (green-to-red gradient) for instant regional health assessment.
+   - **Orders by Type & Vehicle:** Stacked bar chart enabling sub-category drill-down (e.g., seeing which vehicles handle "meal" orders most).
+   - **Order Distribution by Weather:** Pie chart to visualize operational load under different conditions.
+   - **Impact of Traffic:** Bar chart showing average delivery time segmented by traffic severity.
+   - **YTD On-Time Performance vs Target:** Plotly gauge chart providing an at-a-glance view of annual goal tracking.
+4. **Interactive Filters:** Multi-select dropdowns for City, Order Type, and Month to allow ad-hoc slicing of the data.
+5. **Design Rationale:** Single-page application, KPI metric strip pinned at the top, a responsive 2-column visual grid, and a footer containing a paginated raw data table with a one-click CSV download button.
 
-After deploying to [Streamlit Cloud](https://share.streamlit.io), paste your URL at the top of this README. The app lets you:
-- Filter by region, category, and year.
-- See all 5 KPIs update in real time.
-- Download the filtered dataset as CSV.
+---
 
-## Screenshots
+## 📈 Results
 
-_Add 1–2 screenshots or a GIF of the Streamlit app here after your first run._
+| **KPI**               | **Sample (5,000 rows)** | **Expected Full Dataset** |
+| --------------------- | ----------------------- | ------------------------- |
+| Total Orders          | ~5,000                  | ~50,000+                  |
+| On-Time Rate          | ~65%                    | ~75%                      |
+| Avg Delivery Time     | ~25 min                 | ~28 min                   |
+| Top Performing City   | HYD                     | HYD                       |
+| Top Order Type        | meal                    | meal                      |
 
-## How to Run
+> *Numbers above are illustrative based on the bundled 5,000-row sample. Re-execute the app with the full dataset to see exact organizational values.*
 
-```bash
-# 1. Clone
-git clone https://github.com/Fatimahassan-analytics/business-intelligence-dashboard.git
-cd business-intelligence-dashboard
-
-# 2. Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate         # Windows: .venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. (Optional) Download the real Superstore dataset
-python download_data.py
-# Dashboard will fall back to the bundled synthetic sample if this step is skipped.
-
-# 5. Run the notebooks
-jupyter lab notebooks/01_eda.ipynb
-jupyter lab notebooks/02_modeling.ipynb      # KPI definitions + aggregations
-jupyter lab notebooks/03_evaluation.ipynb    # Design rationale walkthrough
-
-# 6. Launch the Streamlit dashboard
-streamlit run app.py
-```
-
-## Tech Stack
-
-- **Language:** Python 3.10+
-- **Data:** pandas, NumPy
-- **Visualisation:** Plotly (interactive), matplotlib + seaborn (notebook-static)
-- **App:** Streamlit
-- **Design system:** 5-KPI strip + 2-column visual grid + filter sidebar
-
-## Repository Structure
-
-```
-business-intelligence-dashboard/
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── LICENSE
-├── download_data.py
-├── app.py
-├── data/
-│   ├── raw/
-│   │   └── superstore_sample.csv   # bundled 5k-row synthetic sample
-│   └── processed/
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_modeling.ipynb           # KPI definitions + aggregations
-│   └── 03_evaluation.ipynb         # design rationale walkthrough
-├── src/
-│   ├── data.py                     # data loading + synthetic generator
-│   ├── model.py                    # KPI computations + aggregations
-│   └── utils.py                    # static-plot helpers
-└── artefacts/                      # auto-created; saved plots
-```
-
-## Design Rationale
-
-**Why 5 KPIs and not 10?** A regional sales director's Monday-morning scan should be answerable in 30 seconds. Five KPIs fit on one screen row; ten would force a second row that gets ignored.
-
-**Why Plotly over Altair or Bokeh?** Plotly gives interactive hover, zoom, and filter without custom JavaScript, and renders cleanly on Streamlit Cloud without extra config.
-
-**Why stacked bar for category drill-down?** A regional director can answer "which sub-category is dragging down Office Supplies?" in one glance, without clicking.
-
-**Why YTD vs prior-year total as the target?** Real sales targets are usually negotiated; without access to that data, prior-year total is the most defensible benchmark and is what most regional directors actually use as a sanity check.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+---
