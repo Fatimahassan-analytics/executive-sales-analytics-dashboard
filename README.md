@@ -2,7 +2,8 @@
 
 A 5-KPI regional sales performance dashboard built in Streamlit + Plotly, with drill-down from region to category and YTD-vs-target tracking.
 
-**Live demo:** _add your Streamlit Cloud URL here after deploying_
+**Live demo:** _https://executive-sales-analytics-dashboard-x3msee7ljwb8zhoqttjcyi.streamlit.app/_
+
 **Author:** Fatima Hassan — [github.com/Fatimahassan-analytics](https://github.com/Fatimahassan-analytics)
 
 ---
